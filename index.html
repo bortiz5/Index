@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Medición de Caudal - Manufactura</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #e5e5e5;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 480px;
+      margin: auto;
+      background-color: #fff;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .cronometro {
+      font-size: 3em;
+      font-family: 'Courier New', monospace;
+      text-align: center;
+      color: #0a0a0a;
+      background-color: #d6f5e3;
+      border: 2px solid #00a65a;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+      margin-top: 0;
+    }
+
+    label {
+      display: block;
+      margin-top: 16px;
+      font-weight: bold;
+    }
+
+    select {
+      width: 100%;
+      padding: 12px;
+      margin-top: 8px;
+      font-size: 1.1em;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    button {
+      width: 100%;
+      padding: 16px;
+      margin-top: 24px;
+      font-size: 1.2em;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .result {
+      margin-top: 24px;
+      padding: 20px;
+      background-color: #f9fbe7;
+      border-left: 8px solid #cddc39;
+      color: #444;
+      font-size: 1.2em;
+      border-radius: 8px;
+      white-space: pre-line;
+    }
+
+    @media screen and (max-width: 480px) {
+      .cronometro {
+        font-size: 2.5em;
+        padding: 16px;
+      }
+
+      button {
+        font-size: 1em;
+        padding: 14px;
+      }
+
+      .result {
+        font-size: 1.1em;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="cronometro" id="cronometro">⏱ 00:00:00</div>
+
+    <h2>Medición de Caudal</h2>
+
+    <label for="volumen">Volumen (litros):</label>
+    <select id="volumen">
+      <option value="1">1 litro</option>
+      <option value="2">2 litros</option>
+      <option value="3">3 litros</option>
+      <option value="4">4 litros</option>
+      <option value="5">5 litros</option>
+      <option value="6">6 litros</option>
+      <option value="7">7 litros</option>
+      <option value="8">8 litros</option>
+      <option value="9">9 litros</option>
+      <option value="10" selected>10 litros</option>
+    </select>
+
+    <button onclick="toggleMedicion()" id="boton">Iniciar Medición</button>
+
+    <div class="result" id="resultado">🧪 Esperando inicio...</div>
+  </div>
+
+  <script>
+    let tiempoInicio = null;
+    let intervalo = null;
+    let enMedicion = false;
+
+    function toggleMedicion() {
+      if (!enMedicion) {
+        iniciarMedicion();
+      } else {
+        detenerMedicion();
+      }
+    }
+
+    function iniciarMedicion() {
+      tiempoInicio = Date.now();
+      enMedicion = true;
+      document.getElementById("boton").textContent = "Detener Medición";
+      intervalo = setInterval(actualizarCronometro, 100);
+    }
+
+    function detenerMedicion() {
+      clearInterval(intervalo);
+      enMedicion = false;
+      document.getElementById("boton").textContent = "Iniciar Medición";
+    }
+
+    function actualizarCronometro() {
+      const ahora = Date.now();
+      const diferencia = ahora - tiempoInicio;
+
+      const minutos = String(Math.floor(diferencia / 60000)).padStart(2, '0');
+      const segundos = String(Math.floor((diferencia % 60000) / 1000)).padStart(2, '0');
+      const centesimas = String(Math.floor((diferencia % 1000) / 10)).padStart(2, '0');
+
+      document.getElementById("cronometro").textContent = `⏱ ${minutos}:${segundos}:${centesimas}`;
+
+      const tiempoMin = diferencia / 60000;
+      const volumen = parseFloat(document.getElementById("volumen").value);
+      const caudal = volumen / tiempoMin;
+
+      if (tiempoMin > 0) {
+        document.getElementById("resultado").textContent =
+          `⏲️ Tiempo transcurrido: ${tiempoMin.toFixed(4)} min\n🚿 Caudal estimado: ${caudal.toFixed(2)} L/min`;
+      }
+    }
+  </script>
+
+</body>
+</html>
