@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Medición de Caudal - Manufactura</title>
   <style>
     * {
@@ -10,96 +10,359 @@
     }
 
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #e5e5e5;
+      font-family: 'Roboto Mono', 'Courier New', monospace;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
       margin: 0;
       padding: 20px;
+      min-height: 100vh;
+      overflow-x: hidden;
+      color: #e0e0e0;
     }
 
     .container {
-      max-width: 480px;
+      max-width: 600px;
       margin: auto;
-      background-color: #fff;
-      padding: 24px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      background: linear-gradient(145deg, #2a2a2a, #1e1e1e);
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.6),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+      border: 1px solid #333;
+      position: relative;
     }
 
-    .cronometro {
-      font-size: 3em;
+    .container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #ff6b35, #f7931e, #ff6b35);
+      border-radius: 16px 16px 0 0;
+    }
+
+    /* Cronómetro Digital */
+    .cronometro-digital {
+      background: radial-gradient(ellipse at center, #0a0a0a, #000000);
+      border: 3px solid #333;
+      border-radius: 20px;
+      padding: 30px;
+      margin: 0 auto 40px auto;
+      max-width: 400px;
+      position: relative;
+      box-shadow: 
+        inset 0 0 30px rgba(0, 0, 0, 0.8),
+        0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .cronometro-digital::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, #ff6b35, #f7931e, #ff6b35);
+      border-radius: 22px;
+      z-index: -1;
+    }
+
+    .tiempo-display {
       font-family: 'Courier New', monospace;
+      font-size: 3.5em;
+      color: #00ff41;
       text-align: center;
-      color: #0a0a0a;
-      background-color: #d6f5e3;
-      border: 2px solid #00a65a;
-      border-radius: 10px;
-      padding: 20px;
-      margin-bottom: 20px;
+      font-weight: bold;
+      text-shadow: 
+        0 0 10px #00ff41,
+        0 0 20px #00ff41,
+        0 0 30px #00ff41;
+      letter-spacing: 0.1em;
+      margin-bottom: 15px;
+      filter: drop-shadow(0 0 15px rgba(0, 255, 65, 0.8));
+    }
+
+    .tiempo-label {
+      text-align: center;
+      color: #888;
+      font-size: 0.9em;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 2px;
     }
 
     h2 {
       text-align: center;
-      color: #2c3e50;
+      color: #e0e0e0;
       margin-top: 0;
+      margin-bottom: 32px;
+      font-size: 2.2em;
+      font-weight: 300;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+
+    h2::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(90deg, #ff6b35, #f7931e);
     }
 
     label {
       display: block;
-      margin-top: 16px;
-      font-weight: bold;
+      margin-top: 24px;
+      font-weight: 600;
+      color: #b0b0b0;
+      font-size: 1.1em;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
     select {
       width: 100%;
-      padding: 12px;
-      margin-top: 8px;
+      padding: 16px;
+      margin-top: 12px;
       font-size: 1.1em;
-      border: 1px solid #ccc;
-      border-radius: 6px;
+      border: 2px solid #444;
+      border-radius: 8px;
+      background: linear-gradient(145deg, #333, #2a2a2a);
+      color: #e0e0e0;
+      transition: all 0.3s ease;
+      box-shadow: 
+        inset 0 2px 4px rgba(0, 0, 0, 0.3),
+        0 2px 8px rgba(0, 0, 0, 0.2);
+      font-family: 'Roboto Mono', monospace;
     }
 
-    button {
+    select:focus {
+      outline: none;
+      border-color: #ff6b35;
+      box-shadow: 
+        inset 0 2px 4px rgba(0, 0, 0, 0.3),
+        0 0 0 3px rgba(255, 107, 53, 0.2);
+    }
+
+    select option {
+      background: #2a2a2a;
+      color: #e0e0e0;
+    }
+
+    /* Recuadros de resultados industriales */
+    .results-container {
+      margin-top: 32px;
+      display: grid;
+      gap: 20px;
+    }
+
+    .result-card {
+      background: linear-gradient(145deg, #2a2a2a, #1e1e1e);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+      border: 1px solid #333;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .result-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
-      padding: 16px;
-      margin-top: 24px;
+      height: 3px;
+      background: linear-gradient(90deg, #ff6b35, #f7931e);
+    }
+
+    .result-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 
+        0 12px 40px rgba(0, 0, 0, 0.6),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    .result-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .result-icon {
+      font-size: 1.5em;
+      margin-right: 12px;
+      width: 45px;
+      height: 45px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(145deg, #ff6b35, #f7931e);
+      border-radius: 8px;
+      color: white;
+      font-weight: bold;
+      box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+    }
+
+    .result-title {
+      font-weight: 600;
+      font-size: 1.1em;
+      color: #e0e0e0;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .result-value {
+      font-size: 2.2em;
+      color: #00ff41;
+      font-family: 'Courier New', monospace;
+      font-weight: 700;
+      margin-bottom: 4px;
+      text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+    }
+
+    .result-unit {
+      font-size: 1em;
+      color: #888;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Botón industrial */
+    .button-container {
+      margin-top: 40px;
+      text-align: center;
+    }
+
+    .boton-principal {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
       font-size: 1.2em;
       font-weight: bold;
-      border: none;
-      border-radius: 8px;
-      background-color: #007bff;
+      border: 4px solid #333;
+      background: linear-gradient(145deg, #ff6b35, #f7931e);
       color: white;
       cursor: pointer;
-      transition: background-color 0.3s;
+      transition: all 0.3s ease;
+      box-shadow: 
+        0 8px 25px rgba(255, 107, 53, 0.4),
+        inset 0 2px 4px rgba(255, 255, 255, 0.2),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.2);
+      position: relative;
+      overflow: hidden;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-family: 'Roboto Mono', monospace;
     }
 
-    button:hover {
-      background-color: #0056b3;
+    .boton-principal::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: all 0.3s ease;
     }
 
-    .result {
-      margin-top: 24px;
-      padding: 20px;
-      background-color: #f9fbe7;
-      border-left: 8px solid #cddc39;
-      color: #444;
-      font-size: 1.2em;
-      border-radius: 8px;
-      white-space: pre-line;
+    .boton-principal:hover {
+      transform: scale(1.05);
+      box-shadow: 
+        0 12px 35px rgba(255, 107, 53, 0.6),
+        inset 0 2px 4px rgba(255, 255, 255, 0.3),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.2);
     }
 
-    @media screen and (max-width: 480px) {
-      .cronometro {
+    .boton-principal:hover::before {
+      width: 100%;
+      height: 100%;
+    }
+
+    .boton-principal:active {
+      transform: scale(0.95);
+    }
+
+    /* Efecto de ondas */
+    .content-wave {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 107, 53, 0.2);
+      transform: scale(0);
+      animation: ripple 1.2s ease-out;
+    }
+
+    @keyframes ripple {
+      0% {
+        transform: scale(0);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+
+    /* Animación de pulso para el botón */
+    .button-pulse {
+      animation: pulse 0.3s ease-in-out;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(0.95); }
+      100% { transform: scale(1); }
+    }
+
+    /* Responsive */
+    @media screen and (max-width: 600px) {
+      .cronometro-digital {
+        padding: 20px;
+      }
+
+      .tiempo-display {
         font-size: 2.5em;
-        padding: 16px;
       }
 
-      button {
+      .boton-principal {
+        width: 120px;
+        height: 120px;
         font-size: 1em;
-        padding: 14px;
       }
 
-      .result {
-        font-size: 1.1em;
+      .result-value {
+        font-size: 1.8em;
+      }
+
+      .container {
+        padding: 24px;
       }
     }
   </style>
@@ -107,7 +370,12 @@
 <body>
 
   <div class="container">
-    <div class="cronometro" id="cronometro">⏱ 00:00:00</div>
+    <div class="content-wave" id="contentWave"></div>
+    
+    <div class="cronometro-digital">
+      <div class="tiempo-display" id="tiempoDisplay">00:00.0</div>
+      <div class="tiempo-label">Tiempo Transcurrido</div>
+    </div>
 
     <h2>Medición de Caudal</h2>
 
@@ -125,9 +393,29 @@
       <option value="10" selected>10 litros</option>
     </select>
 
-    <button onclick="toggleMedicion()" id="boton">Iniciar Medición</button>
+    <div class="results-container">
+      <div class="result-card">
+        <div class="result-header">
+          <div class="result-icon">Q</div>
+          <div class="result-title">Caudal Volumétrico</div>
+        </div>
+        <div class="result-value" id="caudalLitros">0.00</div>
+        <div class="result-unit">L/min</div>
+      </div>
 
-    <div class="result" id="resultado">🧪 Esperando inicio...</div>
+      <div class="result-card">
+        <div class="result-header">
+          <div class="result-icon">m³</div>
+          <div class="result-title">Caudal m³/min</div>
+        </div>
+        <div class="result-value" id="caudalM3">0.0000</div>
+        <div class="result-unit">m³/min</div>
+      </div>
+    </div>
+
+    <div class="button-container">
+      <button class="boton-principal" onclick="toggleMedicion()" id="boton">Iniciar</button>
+    </div>
   </div>
 
   <script>
@@ -136,6 +424,9 @@
     let enMedicion = false;
 
     function toggleMedicion() {
+      // Efecto de ondas sobre el contenido
+      createContentWave(event);
+      
       if (!enMedicion) {
         iniciarMedicion();
       } else {
@@ -146,36 +437,80 @@
     function iniciarMedicion() {
       tiempoInicio = Date.now();
       enMedicion = true;
-      document.getElementById("boton").textContent = "Detener Medición";
-      intervalo = setInterval(actualizarCronometro, 100);
+      document.getElementById("boton").textContent = "Detener";
+      document.getElementById("boton").style.background = "linear-gradient(145deg, #e53e3e, #c53030)";
+      intervalo = setInterval(actualizarMedicion, 100);
     }
 
     function detenerMedicion() {
       clearInterval(intervalo);
       enMedicion = false;
-      document.getElementById("boton").textContent = "Iniciar Medición";
+      document.getElementById("boton").textContent = "Iniciar";
+      document.getElementById("boton").style.background = "linear-gradient(145deg, #ff6b35, #f7931e)";
     }
 
-    function actualizarCronometro() {
+    function actualizarMedicion() {
       const ahora = Date.now();
       const diferencia = ahora - tiempoInicio;
 
-      const minutos = String(Math.floor(diferencia / 60000)).padStart(2, '0');
-      const segundos = String(Math.floor((diferencia % 60000) / 1000)).padStart(2, '0');
-      const centesimas = String(Math.floor((diferencia % 1000) / 10)).padStart(2, '0');
+      // Actualizar cronómetro digital
+      const minutos = Math.floor(diferencia / 60000);
+      const segundos = Math.floor((diferencia % 60000) / 1000);
+      const decimas = Math.floor((diferencia % 1000) / 100);
+      
+      const tiempoFormateado = `${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}.${decimas}`;
+      document.getElementById("tiempoDisplay").textContent = tiempoFormateado;
 
-      document.getElementById("cronometro").textContent = `⏱ ${minutos}:${segundos}:${centesimas}`;
-
+      // Calcular caudal
       const tiempoMin = diferencia / 60000;
       const volumen = parseFloat(document.getElementById("volumen").value);
-      const caudal = volumen / tiempoMin;
+      const caudalL = volumen / tiempoMin;
+      const caudalM3 = caudalL / 1000;
 
       if (tiempoMin > 0) {
-        document.getElementById("resultado").textContent =
-          `⏲️ Tiempo transcurrido: ${tiempoMin.toFixed(4)} min\n🚿 Caudal estimado: ${caudal.toFixed(2)} L/min`;
+        document.getElementById("caudalLitros").textContent = caudalL.toFixed(2);
+        document.getElementById("caudalM3").textContent = caudalM3.toFixed(4);
+      }
+    }
+
+    function createContentWave(event) {
+      const button = event.target;
+      const container = document.querySelector('.container');
+      const contentWave = document.getElementById('contentWave');
+      
+      // Animación de pulso en el botón
+      button.classList.add('button-pulse');
+      setTimeout(() => button.classList.remove('button-pulse'), 300);
+      
+      // Crear múltiples ondas concéntricas
+      for (let i = 0; i < 3; i++) {
+        setTimeout(() => {
+          const ripple = document.createElement('div');
+          ripple.classList.add('ripple');
+          
+          const rect = container.getBoundingClientRect();
+          const buttonRect = button.getBoundingClientRect();
+          
+          const x = buttonRect.left - rect.left + buttonRect.width / 2;
+          const y = buttonRect.top - rect.top + buttonRect.height / 2;
+          
+          const size = Math.max(container.offsetWidth, container.offsetHeight) * 1.5;
+          
+          ripple.style.width = ripple.style.height = size + 'px';
+          ripple.style.left = (x - size / 2) + 'px';
+          ripple.style.top = (y - size / 2) + 'px';
+          
+          contentWave.appendChild(ripple);
+          
+          // Remover después de la animación
+          setTimeout(() => {
+            if (ripple.parentNode) {
+              ripple.parentNode.removeChild(ripple);
+            }
+          }, 1200);
+        }, i * 150);
       }
     }
   </script>
-
 </body>
 </html>
